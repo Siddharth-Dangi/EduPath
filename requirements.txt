@@ -1,0 +1,15 @@
+streamlit
+scikit-learn
+pandas
+numpy
+langgraph
+langchain-core
+langchain-groq
+langchain-community
+chromadb
+sentence-transformers
+python-dotenv
+matplotlib
+seaborn
+torchvision
+protobuf==3.20.3
