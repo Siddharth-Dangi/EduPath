@@ -6,7 +6,6 @@ HuggingFace sentence embeddings. Stores topic-specific learning
 resources that the AI tutor can retrieve on demand.
 """
 
-import os
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.documents import Document
@@ -81,30 +80,25 @@ STUDY_RESOURCES: list[Document] = [
 
 
 class KnowledgeHub:
-    """Wraps ChromaDB to provide semantic search over curated study resources."""
+    """Wraps ChromaDB to provide semantic search over curated study resources.
 
-    def __init__(self, store_path: str = "./edupulse_kb"):
-        self.store_path = store_path
+    Uses an in-memory store so it works on ephemeral cloud deployments
+    (e.g. Streamlit Community Cloud) without requiring a persistent filesystem.
+    """
+
+    def __init__(self):
         self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         self._store: Chroma | None = None
 
     # ------------------------------------------------------------------
 
     def initialise(self) -> None:
-        """Load existing knowledge base or build it from scratch."""
-        if os.path.exists(self.store_path):
-            print("[KnowledgeHub] Loading existing knowledge base…")
-            self._store = Chroma(
-                persist_directory=self.store_path,
-                embedding_function=self.embeddings,
-            )
-        else:
-            print("[KnowledgeHub] Building knowledge base from study resources…")
-            self._store = Chroma.from_documents(
-                documents=STUDY_RESOURCES,
-                embedding=self.embeddings,
-                persist_directory=self.store_path,
-            )
+        """Build the knowledge base in memory from curated study resources."""
+        print("[KnowledgeHub] Initialising in-memory knowledge base…")
+        self._store = Chroma.from_documents(
+            documents=STUDY_RESOURCES,
+            embedding=self.embeddings,
+        )
 
     # ------------------------------------------------------------------
 

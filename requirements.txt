@@ -11,5 +11,3 @@ sentence-transformers
 python-dotenv
 matplotlib
 seaborn
-torchvision
-protobuf==3.20.3
